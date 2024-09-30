@@ -76,8 +76,8 @@ def register_datasets_mixtures():
     llava_instruct = Dataset(
         dataset_name="llava_instruct",
         dataset_type="torch",
-        data_path="./playground/data/llava_instruct_150k_zh.jsonl",
-        image_path="./playground/data/coco",
+        data_path="/data3/fengjie/init_ckpt/llava_zh/llava_instruct_150k_zh.json",
+        image_path="/data3/fengjie/init_ckpt/InternVL-Chat-V1-2-SFT-Data/data/coco/train2017",
         description="",
     )
     add_dataset(llava_instruct)
