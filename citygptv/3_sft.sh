@@ -14,15 +14,18 @@ echo "Single node setup, no SLURM required."
 STAGE1_PATH=$1
 # for example, llava-v1.5-7b-mm-align
 
+export CUDA_VISIBLE_DEVICES=0,2,6,7
+OUTPUT_DIR=/data3/fengjie/model_zoo/vila-20240930-llava_instruct_158k
+CODE_PATH=/data1/fengjie/CityGPTV/train/VILA/llava/train/train_mem.py
 bs=16  # Adjust batch size as needed for your single GPU
 echo "number of nodes:" $n_node
 echo "per device batch size:" $bs
 echo "node rank:" $CURRENT_RANK
-export CUDA_VISIBLE_DEVICES=3,4,5,6
+NUM_GPUS=$(echo $CUDA_VISIBLE_DEVICES | tr ',' ' ' | wc -w)
 
-torchrun --nnodes=$n_node --nproc_per_node=4 --master_port=25001 \
+torchrun --nnodes=$n_node --nproc_per_node=$NUM_GPUS --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
-    /data1/fengjie/CityGPTV/train/VILA/llava/train/train_mem.py \
+    $CODE_PATH \
     --deepspeed ./zero3.json \
     --model_name_or_path /data3/fengjie/init_ckpt/Llama-3-VILA1.5-8B \
     --version llama_3 \
@@ -38,7 +41,7 @@ torchrun --nnodes=$n_node --nproc_per_node=4 --master_port=25001 \
     --mm_use_im_patch_token False \
     --image_aspect_ratio resize \
     --bf16 True \
-    --output_dir /data3/fengjie/model_zoo/vila/ \
+    --output_dir $OUTPUT_DIR \
     --num_train_epochs 1 \
     --per_device_train_batch_size $bs \
     --per_device_eval_batch_size 4 \
