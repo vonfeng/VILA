@@ -33,7 +33,7 @@ torchrun --nnodes=$n_node --nproc_per_node=$NUM_GPUS --master_port=25001 \
     --vision_tower /data3/fengjie/init_ckpt/siglip-so400m-patch14-384  \
     --mm_vision_select_feature cls_patch \
     --mm_projector mlp_downsample \
-    --tune_vision_tower False \
+    --tune_vision_tower True \
     --tune_mm_projector True \
     --tune_language_model True \
     --mm_vision_select_layer -2 \
@@ -48,7 +48,7 @@ torchrun --nnodes=$n_node --nproc_per_node=$NUM_GPUS --master_port=25001 \
     --gradient_accumulation_steps 2 \
     --evaluation_strategy "no" \
     --save_strategy "steps" \
-    --save_steps 100 \
+    --save_steps 500 \
     --save_total_limit 1 \
     --learning_rate 1e-4 \
     --weight_decay 0. \
@@ -56,7 +56,7 @@ torchrun --nnodes=$n_node --nproc_per_node=$NUM_GPUS --master_port=25001 \
     --lr_scheduler_type "cosine" \
     --logging_steps 1 \
     --tf32 True \
-    --model_max_length 2048 \
+    --model_max_length 4096 \
     --gradient_checkpointing True \
     --dataloader_num_workers 16 \
     --lazy_preprocess True \
