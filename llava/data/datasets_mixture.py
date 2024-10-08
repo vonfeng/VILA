@@ -65,11 +65,12 @@ def register_datasets_mixtures():
     add_dataset(sharegpt4v_pretrain)
 
     # SFT
+    ########################
     sharegpt4v_gpt4_100k = Dataset(
         dataset_name="sharegpt4v_gpt4_100k",
         dataset_type="torch",
-        data_path="./playground/datasharegpt_video/ShareGPT4V/sharegpt4v_instruct_gpt4-vision_cap100k.json",
-        image_path="./playground/datasharegpt_video/ShareGPT4V/data",
+        data_path="/data3/fengjie/init_ckpt/ShareGPT4V/sharegpt4v_instruct_gpt4-vision_cap100k.json",
+        image_path="/data3/fengjie/init_ckpt/InternVL-Chat-V1-2-SFT-Data/data",
     )
     add_dataset(sharegpt4v_gpt4_100k)
 
@@ -82,6 +83,63 @@ def register_datasets_mixtures():
     )
     add_dataset(llava_instruct)
 
+    citygptv_single = Dataset(
+        dataset_name="citygptv_single",
+        dataset_type="torch",
+        data_path="/data3/wangshengyuan/shared_dir/VILA_format/Beijing_new_uniimage_VILA_train.json",
+        image_path="/data3/wangshengyuan/CityData/Imgs-Beijing_uniimage_new/"
+    )
+    add_dataset(citygptv_single)
+    
+    citygptv_img2text2img = Dataset(
+        dataset_name="citygptv_img2text2img",
+        dataset_type="torch",
+        data_path="/data3/wangshengyuan/shared_dir/CoT/Beijing/train_vila.json",
+        image_path="/data3/wangshengyuan/shared_dir/CoT/Beijing"
+    )
+    add_dataset(citygptv_img2text2img)
+
+    citygptv_multi = Dataset(
+        dataset_name="citygptv_multi",
+        dataset_type="torch",
+        data_path="/data3/xiyanxin/ThreeCityImage/wudaokou-test-data_multi_image_SC.json",
+        image_path=""
+    )
+    add_dataset(citygptv_multi)
+    
+    citygptv_text2img2text = Dataset(
+        dataset_name="citygptv_text2img2text",
+        dataset_type="torch",
+        data_path="/data3/xiyanxin/ThreeCityImage/wudaokou-test-data_multi_mode_retrieval_update.json",
+        image_path=""
+    )
+    add_dataset(citygptv_text2img2text)
+
+    citygptv_citywalk_vison = Dataset(
+        dataset_name="citygptv_citywalk_vison",
+        dataset_type="torch",
+        data_path="/data1/citygpt/datasets/city_world_model/citywalk/citywalk-wudaokou_large-mock-v14.1-citygptv.json",
+        image_path=""
+    )
+    add_dataset(citygptv_citywalk_vison)
+
+    citygpt_citywalk = Dataset(
+        dataset_name="citygpt_citywalk",
+        dataset_type="vflan",
+        data_path="/data1/citygpt/datasets/city_world_model/citywalk/citywalk_wudaokou_large/",
+        image_path=""
+    )
+    add_dataset(citygpt_citywalk)
+
+    citygpt_cityqa = Dataset(
+        dataset_name="citygpt_cityqa",
+        dataset_type="vflan",
+        data_path="/data1/citygpt/datasets/city_world_model/citywalk/cityqa_wudaokou_large",
+        image_path=""
+    )
+    add_dataset(citygpt_cityqa)
+
+    ####################
     sharegpt4v_sft = Dataset(
         dataset_name='sharegpt4v_sft',
         dataset_type='torch',
