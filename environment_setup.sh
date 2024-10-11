@@ -10,11 +10,12 @@ else
 fi
 
 pip install --upgrade pip  # enable PEP 660 support
-# wget https://github.com/Dao-AILab/flash-attention/releases/download/v2.4.2/flash_attn-2.4.2+cu118torch2.0cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
-pip install /data3/fengjie/archive/flash_attn/flash_attn-2.4.2+cu118torch2.0cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
-pip install -e .
-pip install -e ".[train]"
+# # wget https://github.com/Dao-AILab/flash-attention/releases/download/v2.4.2/flash_attn-2.4.2+cu118torch2.0cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
+pip install /mnt/public/fengjie/pkgs/flash_attn-2.4.2+cu118torch2.0cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
+pip install -e . -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install -e ".[train]" -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-pip install git+https://github.com/huggingface/transformers@v4.36.2
+# pip install git+https://github.com/huggingface/transformers@v4.36.2
+pip install transformers==4.36.2
 site_pkg_path=$(python -c 'import site; print(site.getsitepackages()[0])')
 cp -rv ./llava/train/transformers_replace/* $site_pkg_path/transformers/
