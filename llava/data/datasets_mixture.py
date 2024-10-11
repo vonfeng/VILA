@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-
+import os
 
 @dataclass
 class Dataset:
@@ -66,67 +66,71 @@ def register_datasets_mixtures():
 
     # SFT
     ########################
+    COMMON_PATH="/mnt/public/fengjie/citygptv-training-data/"
     sharegpt4v_gpt4_100k = Dataset(
         dataset_name="sharegpt4v_gpt4_100k",
         dataset_type="torch",
-        data_path="/data3/fengjie/init_ckpt/ShareGPT4V/sharegpt4v_instruct_gpt4-vision_cap100k.json",
-        image_path="/data3/fengjie/init_ckpt/InternVL-Chat-V1-2-SFT-Data/data",
+        data_path=os.path.join(COMMON_PATH, "general/sharegpt4v_instruct_gpt4-vision_cap100k.json"),
+        image_path=os.path.join(COMMON_PATH, "general"),
     )
     add_dataset(sharegpt4v_gpt4_100k)
 
     llava_instruct = Dataset(
         dataset_name="llava_instruct",
         dataset_type="torch",
-        data_path="/data3/fengjie/init_ckpt/llava_zh/llava_instruct_150k_zh.json",
-        image_path="/data3/fengjie/init_ckpt/InternVL-Chat-V1-2-SFT-Data/data/coco/train2017",
+        data_path=os.path.join(COMMON_PATH, "general/llava_instruct_150k_zh.json"),
+        image_path=os.path.join(COMMON_PATH, "general/coco/train2017"),
         description="",
     )
     add_dataset(llava_instruct)
 
+    # single
     citygptv_single = Dataset(
         dataset_name="citygptv_single",
         dataset_type="torch",
-        data_path="/data3/wangshengyuan/shared_dir/VILA_format/Beijing_new_uniimage_VILA_train.json",
-        image_path="/data3/wangshengyuan/CityData/Imgs-Beijing_uniimage_new/"
+        data_path=os.path.join(COMMON_PATH, "uni_view/Beijing/basic-all-VILA/Beijing_new_uniimage_train.json"),
+        image_path=os.path.join(COMMON_PATH, "uni_view")
     )
     add_dataset(citygptv_single)
     
     citygptv_img2text2img = Dataset(
         dataset_name="citygptv_img2text2img",
         dataset_type="torch",
-        data_path="/data3/wangshengyuan/shared_dir/CoT/Beijing/train_vila.json",
-        image_path="/data3/wangshengyuan/shared_dir/CoT/Beijing"
+        data_path=os.path.join(COMMON_PATH, "uni_view/Beijing/cot-VILA/Beijing_new_uniimage_train.json"),
+        image_path=os.path.join(COMMON_PATH, "uni_view")
     )
     add_dataset(citygptv_img2text2img)
 
+    # cross
     citygptv_multi = Dataset(
         dataset_name="citygptv_multi",
         dataset_type="torch",
-        data_path="/data3/xiyanxin/ThreeCityImage/wudaokou-test-data_multi_image_SC.json",
-        image_path=""
+        data_path=os.path.join(COMMON_PATH, "cross_view/multi_image_data_Beijing_train_wo_COT.jsonl"),
+        image_path=os.path.join(COMMON_PATH, "cross_view")
     )
     add_dataset(citygptv_multi)
     
     citygptv_text2img2text = Dataset(
         dataset_name="citygptv_text2img2text",
         dataset_type="torch",
-        data_path="/data3/xiyanxin/ThreeCityImage/wudaokou-test-data_multi_mode_retrieval_update.json",
-        image_path=""
+        data_path=os.path.join(COMMON_PATH, "cross_view/multi_image_data_Beijing_COT_train.jsonl"),
+        image_path=os.path.join(COMMON_PATH, "cross_view")
     )
     add_dataset(citygptv_text2img2text)
 
+    # citywalk
     citygptv_citywalk_vison = Dataset(
         dataset_name="citygptv_citywalk_vison",
         dataset_type="torch",
-        data_path="/data1/citygpt/datasets/city_world_model/citywalk/citywalk-wudaokou_large-mock-v14.1-citygptv.json",
-        image_path=""
+        data_path=os.path.join(COMMON_PATH, "citywalk/citywalk-wudaokou_large-mock-v14.1-citygptv-v2.json"),
+        image_path=os.path.join(COMMON_PATH, "citywalk")
     )
     add_dataset(citygptv_citywalk_vison)
 
     citygpt_citywalk = Dataset(
         dataset_name="citygpt_citywalk",
         dataset_type="vflan",
-        data_path="/data1/citygpt/datasets/city_world_model/citywalk/citywalk_wudaokou_large/",
+        data_path=os.path.join(COMMON_PATH, "citywalk/citywalk_wudaokou_large"),
         image_path=""
     )
     add_dataset(citygpt_citywalk)
@@ -134,10 +138,27 @@ def register_datasets_mixtures():
     citygpt_cityqa = Dataset(
         dataset_name="citygpt_cityqa",
         dataset_type="vflan",
-        data_path="/data1/citygpt/datasets/city_world_model/citywalk/cityqa_wudaokou_large",
+        data_path=os.path.join(COMMON_PATH, "citywalk/cityqa_wudaokou_large"),
         image_path=""
     )
     add_dataset(citygpt_cityqa)
+
+    # general
+    citygpt_vflan= Dataset(
+        dataset_name="citygpt_vflan",
+        dataset_type="vflan",
+        data_path=os.path.join(COMMON_PATH, "general/new-vflan"),
+        image_path=""
+    )
+    add_dataset(citygpt_vflan)
+
+    citygpt_general= Dataset(
+        dataset_name="citygpt_general",
+        dataset_type="vflan",
+        data_path=os.path.join(COMMON_PATH, "general/citygpt-txt"),
+        image_path=""
+    )
+    add_dataset(citygpt_general)
 
     ####################
     sharegpt4v_sft = Dataset(

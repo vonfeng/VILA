@@ -1,5 +1,15 @@
 #!/bin/bash
 
+########## TODO 核心实验参数：数据组合+输出路径+GPU，只修改这些参数即可，可用数据参考datasets_mixture定义
+OUTPUT_DIR=/mnt/public/fengjie/model_zoo/citygptv-20241007-mix-v4
+DATA_MIX=llava_instruct+sharegpt4v_gpt4_100k+citygptv_single+citygptv_img2text2img+citygptv_citywalk_vison+citygpt_citywalk+citygpt_cityqa+citygpt_vflan+citygpt_general+citygptv_multi+citygptv_text2img2text
+GPUS=0,1,2,3,4,5,6,7
+# DATA_MIX=llava_instruct+citygptv_citywalk_vison+citygpt_citywalk+citygpt_cityqa+citygpt_vflan+citygpt_general    # citywalk testing
+# DATA_MIX=llava_instruct+citygptv_multi+citygptv_text2img2text    # multi-testing
+# DATA_MIX=llava_instruct+citygptv_single+citygptv_img2text2img      # sinle-testing
+#########
+
+
 # Set the master address to localhost for single node
 export MASTER_ADDR="127.0.0.1"
 export CURRENT_RANK=0
@@ -14,23 +24,28 @@ echo "Single node setup, no SLURM required."
 STAGE1_PATH=$1
 # for example, llava-v1.5-7b-mm-align
 
-export CUDA_VISIBLE_DEVICES=0,2,6,7
-OUTPUT_DIR=/data3/fengjie/model_zoo/vila-20241007-llava_instruct_158k
-CODE_PATH=/data1/fengjie/CityGPTV/train/VILA/llava/train/train_mem.py
-bs=16  # Adjust batch size as needed for your single GPU
-echo "number of nodes:" $n_node
+export CUDA_VISIBLE_DEVICES=$GPUS
+mkdir $OUTPUT_DIR
+CODE_PATH=/mnt/public/fengjie/CityGPTV/train/VILA/llava/train/train_mem.py
+MODEL_MAX_LENGTH=2048
+bs=8  # Adjust batch size as needed for your single GPU
+echo "number of nodes:" $n_node7n
 echo "per device batch size:" $bs
 echo "node rank:" $CURRENT_RANK
 NUM_GPUS=$(echo $CUDA_VISIBLE_DEVICES | tr ',' ' ' | wc -w)
+
+script_name=$(basename "$0")
+cp $script_name $OUTPUT_DIR/$script_name
+cp /mnt/public/fengjie/CityGPTV/train/VILA/llava/data/datasets_mixture.py $OUTPUT_DIR/datasets_mixture.py
 
 torchrun --nnodes=$n_node --nproc_per_node=$NUM_GPUS --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
     $CODE_PATH \
     --deepspeed ./zero3.json \
-    --model_name_or_path /data3/fengjie/init_ckpt/Llama-3-VILA1.5-8B \
+    --model_name_or_path /mnt/public/Llama-3-VILA1.5-8B \
     --version llama_3 \
-    --data_mixture llava_instruct \
-    --vision_tower /data3/fengjie/init_ckpt/siglip-so400m-patch14-384  \
+    --data_mixture $DATA_MIX \
+    --vision_tower /mnt/public/google/siglip-so400m-patch14-384  \
     --mm_vision_select_feature cls_patch \
     --mm_projector mlp_downsample \
     --tune_vision_tower False \
@@ -56,9 +71,10 @@ torchrun --nnodes=$n_node --nproc_per_node=$NUM_GPUS --master_port=25001 \
     --lr_scheduler_type "cosine" \
     --logging_steps 1 \
     --tf32 True \
-    --model_max_length 4096 \
+    --model_max_length $MODEL_MAX_LENGTH \
     --gradient_checkpointing True \
     --dataloader_num_workers 16 \
     --lazy_preprocess True \
     --vflan_no_system_prompt True \
     --report_to tensorboard
+
