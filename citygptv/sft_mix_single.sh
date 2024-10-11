@@ -1,5 +1,17 @@
 #!/bin/bash
 
+########## TODO 核心实验参数：数据组合+输出路径+GPU，只修改这些参数即可，可用数据参考datasets_mixture定义
+# OUTPUT_DIR=/data3/fengjie/model_zoo/citygptv-20241007-mix-v3
+OUTPUT_DIR=/data3/fengjie/model_zoo/citygptv-20241007-mix-single
+DATA_MIX=llava_instruct+citygptv_single+citygptv_img2text2img
+GPUS=4,5,6,7
+# DATA_MIX=llava_instruct+sharegpt4v_gpt4_100k+citygptv_multi+citygptv_single+citygptv_text2img2text+citygptv_img2text2img+citygptv_citywalk_vison+citygpt_citywalk+citygpt_cityqa+citygpt_vflan+citygpt_general
+# DATA_MIX=citygptv_citywalk_vison+citygpt_citywalk+citygpt_cityqa+citygpt_vflan+citygpt_general    # citywalk testing
+# DATA_MIX=citygptv_multi+citygptv_text2img2text    # multi-testing
+# DATA_MIX=llava_instruct+citygptv_single+citygptv_img2text2img      # sinle-testing
+#########
+
+
 # Set the master address to localhost for single node
 export MASTER_ADDR="127.0.0.1"
 export CURRENT_RANK=0
@@ -14,18 +26,19 @@ echo "Single node setup, no SLURM required."
 STAGE1_PATH=$1
 # for example, llava-v1.5-7b-mm-align
 
-export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
-OUTPUT_DIR=/data3/fengjie/model_zoo/citygptv-20241007-mix-v2
+export CUDA_VISIBLE_DEVICES=$GPUS
 mkdir $OUTPUT_DIR
 CODE_PATH=/data1/fengjie/CityGPTV/train/VILA/llava/train/train_mem.py
-DATA_MIX=llava_instruct+sharegpt4v_gpt4_100k+citygptv_multi+citygptv_single+citygptv_text2img2text+citygptv_img2text2img+citygptv_citywalk_vison+citygpt_citywalk+citygpt_cityqa
-# DATA_MIX=citygpt_citywalk+citygpt_cityqa
 MODEL_MAX_LENGTH=2048
 bs=8  # Adjust batch size as needed for your single GPU
 echo "number of nodes:" $n_node7n
 echo "per device batch size:" $bs
 echo "node rank:" $CURRENT_RANK
 NUM_GPUS=$(echo $CUDA_VISIBLE_DEVICES | tr ',' ' ' | wc -w)
+
+script_name=$(basename "$0")
+cp $script_name $OUTPUT_DIR/$script_name
+cp /data1/fengjie/CityGPTV/train/VILA/llava/data/datasets_mixture.py $OUTPUT_DIR/datasets_mixture.py
 
 torchrun --nnodes=$n_node --nproc_per_node=$NUM_GPUS --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
@@ -66,7 +79,3 @@ torchrun --nnodes=$n_node --nproc_per_node=$NUM_GPUS --master_port=25001 \
     --lazy_preprocess True \
     --vflan_no_system_prompt True \
     --report_to tensorboard
-
-script_name=$(basename "$0")
-cp $script_name $OUTPUT_DIR/$script_name
-cp /data1/fengjie/CityGPTV/train/VILA/llava/data/datasets_mixture.py $OUTPUT_DIR/datasets_mixture.py
